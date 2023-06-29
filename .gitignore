@@ -2,7 +2,7 @@
 *.idea/
 score_hma
 painted_lidar
-/detector/data/kitti/training/log/
+/detector/data/kitti/training
 /painting/hma/assets
 /painting/mmseg/checkpoints
 **/.DS_Store
