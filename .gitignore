@@ -1,4 +1,5 @@
 .vscode
+*.idea/
 score_hma
 painted_lidar
 /detector/data/kitti/training/log/
