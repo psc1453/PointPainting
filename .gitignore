@@ -3,6 +3,8 @@
 score_hma
 painted_lidar
 /detector/data/kitti/training
+/detector/output
+/detector/data/kitti/kitti_dbinfos_train.pkl
 /painting/hma/assets
 /painting/mmseg/checkpoints
 **/.DS_Store
