@@ -57,6 +57,8 @@ def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
     parser.add_argument('--cfg_file', type=str, default='cfgs/kitti_models/second.yaml',
                         help='specify the config for demo')
+    parser.add_argument('--root_dir', type=str, default=Path(__file__).resolve().parent.parent,
+                        help='the directory of detect detector')
     parser.add_argument('--data_path', type=str, default='demo_data',
                         help='specify the point cloud data file or directory')
     parser.add_argument('--ckpt', type=str, default=None, help='specify the pretrained model')
@@ -65,6 +67,7 @@ def parse_config():
     args = parser.parse_args()
 
     cfg_from_yaml_file(args.cfg_file, cfg)
+    cfg.ROOT_DIR = Path(args.root_dir)
 
     return args, cfg
 
