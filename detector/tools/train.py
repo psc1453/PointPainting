@@ -60,6 +60,9 @@ def parse_config():
 
 
 def main():
+
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+
     args, cfg = parse_config()
     if args.launcher == 'none':
         dist_train = False
@@ -69,6 +72,8 @@ def main():
             args.tcp_port, args.local_rank, backend='nccl'
         )
         dist_train = True
+
+    torch.cuda.set_device(cfg.LOCAL_RANK)
 
     if args.batch_size is None:
         args.batch_size = cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU
