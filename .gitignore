@@ -8,3 +8,5 @@ painted_lidar
 /painting/mmseg/checkpoints
 **/.DS_Store
 **/__pycache__
+detector/output_stero
+detector/output_left
