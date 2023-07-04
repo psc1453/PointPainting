@@ -6,8 +6,10 @@ painted_lidar
 /detector/data/zte
 /detector/output
 detector/output_stero
+/detector/tools/temp/
 detector/output_left
 /painting/hma/assets
 /painting/mmseg/checkpoints
 **/.DS_Store
 **/__pycache__
+
