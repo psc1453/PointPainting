@@ -3,6 +3,7 @@ import glob
 import os
 
 import math
+from tqdm import tqdm
 from pathlib import Path
 
 import numpy as np
@@ -125,7 +126,8 @@ if __name__ == '__main__':
         except FileNotFoundError:
             print("No previous result, continue.")
 
-    for i, data_dict in enumerate(inference_dataset):
+
+    for i, data_dict in tqdm(enumerate(inference_dataset), total=len(inference_dataset), desc="Detection Progress: "):
         batch_dict = inference_dataset.collate_batch([data_dict])
         load_data_to_gpu(batch_dict)
         with torch.no_grad():
