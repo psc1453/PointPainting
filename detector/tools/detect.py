@@ -17,15 +17,17 @@ from pcdet.models import load_data_to_gpu
 
 def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
-    parser.add_argument('--cfg_file', type=str, default='cfgs/kitti_models/second.yaml',
+    parser.add_argument('--cfg_file', type=str, default='cfgs/kitti_models/pointpillar_painted_zte.yaml',
                         help='specify the config for demo')
     parser.add_argument('--root_dir', type=str, default=Path(__file__).resolve().parent.parent,
                         help='root dir of the project.(detector dir')
 
-    parser.add_argument('--data_path', type=str, default='demo_data',
+    parser.add_argument('--data_path', type=str, default='../data/zte/training/painted_lidar/',
                         help='specify the point cloud data file or directory')
-    parser.add_argument('--ckpt', type=str, default=None, help='specify the pretrained model')
-    parser.add_argument('--ext', type=str, default='.bin', help='specify the extension of your point cloud data file')
+    parser.add_argument('--ckpt', type=str,
+                        default='../output/kitti_models/pointpillar_painted/default/ckpt/checkpoint_epoch_80.pth',
+                        help='specify the pretrained model')
+    parser.add_argument('--ext', type=str, default='.npy', help='specify the extension of your point cloud data file')
 
     args = parser.parse_args()
 
@@ -104,7 +106,7 @@ def get_alpha(original_xyz):
 
 if __name__ == '__main__':
     args, cfg = parse_config()
-    log_file = 'temp/log.txt'
+    log_file = 'detection_result/log.txt'
     logger = common_utils.create_logger(log_file, rank=cfg.LOCAL_RANK)
     inference_dataset = DemoDataset(
         dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False,
@@ -117,7 +119,11 @@ if __name__ == '__main__':
     model.eval()
 
     class_names = cfg.CLASS_NAMES
-    os.remove('temp/result.txt')
+    for i in range(len(class_names)):
+        try:
+            os.remove('detection_result/result_%d.txt' % (i + 1))
+        except FileNotFoundError:
+            print("No previous result, continue.")
 
     for i, data_dict in enumerate(inference_dataset):
         batch_dict = inference_dataset.collate_batch([data_dict])
@@ -135,13 +141,13 @@ if __name__ == '__main__':
                 obj_type = labels[box_index]
                 confidence = scores[box_index]
                 h, w, l, x, y, z, rot_y = boxes[box_index][4], boxes[box_index][5], boxes[box_index][3], \
-                boxes[box_index][0], boxes[box_index][1], boxes[box_index][2], boxes[box_index][6]
+                    boxes[box_index][0], boxes[box_index][1], boxes[box_index][2], boxes[box_index][6]
 
                 rot_y = get_rox_y(rot_y)
                 x, y, z = trans_xyx((x, y, z))
                 alpha = get_alpha((x, y, z))
 
-                with open('temp/result.txt', 'a+') as f:
+                with open('detection_result/result_%d.txt' % obj_type, 'a+') as f:
                     print('%d,%d,-1,-1,-1,-1,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f'
                           % (frame,
                              obj_type,
